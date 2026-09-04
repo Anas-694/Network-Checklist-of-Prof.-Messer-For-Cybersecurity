@@ -15,7 +15,7 @@ Just open [index.html](index.html) in any browser, or visit the live deployment 
 
 ## Live Demo
 
-Deployed on Vercel — link added after deployment.
+**[network-plus-checklist-repo.vercel.app](https://network-plus-checklist-repo.vercel.app)**
 
 ## License
 
