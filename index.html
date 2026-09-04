@@ -397,18 +397,18 @@ function idFor(url) {
   return url.split("=").pop();
 }
 
-async function loadState() {
+function loadState() {
   try {
-    const res = await window.storage.get(STORAGE_KEY);
-    state = res && res.value ? JSON.parse(res.value) : {};
+    const raw = localStorage.getItem(STORAGE_KEY);
+    state = raw ? JSON.parse(raw) : {};
   } catch (e) {
     state = {};
   }
 }
 
-async function saveState() {
+function saveState() {
   try {
-    await window.storage.set(STORAGE_KEY, JSON.stringify(state));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   } catch (e) {
     console.error("Could not save progress", e);
   }
@@ -461,26 +461,24 @@ function render() {
   document.getElementById("progressFill").style.width = totalAll ? `${(totalDone / totalAll) * 100}%` : "0%";
 
   container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-    cb.addEventListener("change", async (e) => {
+    cb.addEventListener("change", (e) => {
       const id = e.target.dataset.id;
       state[id] = e.target.checked;
-      await saveState();
+      saveState();
       render();
     });
   });
 }
 
-document.getElementById("resetBtn").addEventListener("click", async () => {
+document.getElementById("resetBtn").addEventListener("click", () => {
   if (!confirm("Reset all checkmarks?")) return;
   state = {};
-  await saveState();
+  saveState();
   render();
 });
 
-(async function init() {
-  await loadState();
-  render();
-})();
+loadState();
+render();
 </script>
 </body>
 </html>
