@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Network+ Video Checklist</title>
+<style>
+  :root {
+    --bg: #0b1210;
+    --panel: #101a17;
+    --line: #22322c;
+    --ink: #dfe9e3;
+    --muted: #7d9188;
+    --dim: #556059;
+
+    --high: #58e0a8;
+    --high-dim: #1c3d31;
+    --med: #f0b055;
+    --med-dim: #3d321a;
+    --low: #6f8079;
+    --low-dim: #1c2320;
+
+    --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 42px 42px;
+    background-attachment: fixed;
+    color: var(--ink);
+    font-family: var(--sans);
+    margin: 0;
+    padding: 36px 16px 90px;
+    line-height: 1.5;
+  }
+
+  .wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 28px 26px 22px;
+    box-shadow: 0 0 0 1px rgba(88, 224, 168, 0.04), 0 20px 50px rgba(0,0,0,0.35);
+  }
+
+  header {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 18px;
+    margin-bottom: 24px;
+  }
+
+  .prompt {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--high);
+    margin-bottom: 8px;
+    letter-spacing: 0.01em;
+  }
+  .prompt::before { content: "$ "; color: var(--dim); }
+
+  h1 {
+    font-size: 1.55rem;
+    margin: 0 0 6px;
+    letter-spacing: -0.01em;
+    color: #f2f7f4;
+    font-weight: 650;
+  }
+
+  .sub {
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 18px;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+  }
+
+  .progress-track {
+    flex: 1;
+    height: 6px;
+    background: var(--low-dim);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--high), #8ff0c8);
+    width: 0%;
+    transition: width 0.35s ease;
+  }
+
+  .progress-count {
+    white-space: nowrap;
+    color: var(--high);
+    font-weight: 600;
+  }
+
+  .group {
+    margin-bottom: 28px;
+  }
+
+  .group-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .group-head .tag {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    padding: 3px 9px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+  }
+
+  .group-head .count {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--dim);
+  }
+
+  .tag-high { background: var(--high-dim); color: var(--high); }
+  .tag-med  { background: var(--med-dim);  color: var(--med); }
+  .tag-low  { background: var(--low-dim);  color: var(--low); }
+
+  .group-note {
+    font-size: 0.83rem;
+    color: var(--muted);
+    margin: 0 0 12px;
+  }
+
+  ul.videos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  li.video {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 2px;
+    border-bottom: 1px solid var(--line);
+    transition: background 0.15s ease;
+  }
+
+  li.video:hover { background: rgba(255,255,255,0.02); }
+
+  li.video.done { opacity: 0.4; }
+  li.video.done .title { text-decoration: line-through; color: var(--dim); }
+
+  input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    margin-top: 3px;
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+    border: 1.5px solid var(--dim);
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    background: transparent;
+  }
+
+  input[type="checkbox"]:checked {
+    background: var(--high);
+    border-color: var(--high);
+  }
+
+  input[type="checkbox"]:checked::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 1px;
+    width: 4px;
+    height: 8px;
+    border: solid #06120d;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  .vid-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  a.title {
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 0.95rem;
+    border-bottom: 1px solid transparent;
+  }
+
+  a.title:hover { color: var(--high); border-bottom-color: var(--high); }
+
+  .dur {
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    color: var(--dim);
+    white-space: nowrap;
+  }
+
+  .why {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin: 2px 0 0;
+    flex-basis: 100%;
+  }
+
+  .reset-row {
+    text-align: center;
+    margin-top: 24px;
+  }
+
+  .reset-btn {
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .reset-btn:hover { border-color: var(--med); color: var(--med); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="prompt">ifconfig study-plan --priority</div>
+    <h1>Professor Messer N10-008 — Study Checklist</h1>
+    <div class="sub">Sorted by priority for cybersecurity study &middot; tap a title to watch, tick the box when done</div>
+    <div class="progress-row">
+      <span class="progress-count" id="progressCount">0 / 0 watched</span>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+  </header>
+
+  <div id="groups"></div>
+
+  <div class="reset-row">
+    <button class="reset-btn" id="resetBtn">Reset all checkmarks</button>
+  </div>
+
+</div>
+
+<script>
+const DATA = [
+  {
+    key: "high",
+    label: "Must Watch",
+    tagClass: "tag-high",
+    note: "Core exam content + directly useful for cybersecurity/pentesting mindset.",
+    videos: [
+      ["Understanding the OSI Model", "12:17", "https://www.professormesser.com/?p=624596", "Base layer for everything we discuss"],
+      ["Binary Math", "7:49", "https://www.professormesser.com/?p=624681", "Needed for subnetting"],
+      ["IPv4 Addressing", "9:17", "https://www.professormesser.com/?p=624684", "Reinforces private/public IP topic"],
+      ["Network Address Translation", "7:16", "https://www.professormesser.com/?p=624687", "Compare with the NAT-is-not-security discussion"],
+      ["IPv4 Subnet Masks", "8:41", "https://www.professormesser.com/?p=624696", "Broadcast/network address calc"],
+      ["Calculating IPv4 Subnets and Hosts", "9:40", "https://www.professormesser.com/?p=624699", "Practical subnetting skill"],
+      ["IPv6 Addressing", "13:18", "https://www.professormesser.com/?p=624709", "EUI-64, Link-Local — just covered"],
+      ["Introduction to IP (Ports/Protocols)", "14:09", "https://www.professormesser.com/?p=624850", "Current topic in progress"],
+      ["Common Ports", "17:03", "https://www.professormesser.com/?p=624854", "Highest-value single video in the course"],
+      ["Other Useful Protocols", "7:39", "https://www.professormesser.com/?p=624857", "Directly follows Common Ports"],
+      ["DHCP Overview", "8:36", "https://www.professormesser.com/?p=624862", "APIPA's root cause"],
+      ["An Overview of DNS", "10:25", "https://www.professormesser.com/?p=624896", "DNS attacks are common in security"],
+      ["VLANs and Trunking", "10:30", "https://www.professormesser.com/?p=625080", "Connects to VLAN Hopping attack"],
+      ["Wireless Encryption", "8:51", "https://www.professormesser.com/?p=625136", "WPA2/WPA3 — security critical"],
+      ["Logs and Monitoring", "11:21", "https://www.professormesser.com/?p=625228", "Core blue-team skill"],
+      ["Security Policies", "8:48", "https://www.professormesser.com/?p=625251", "Direct cybersecurity relevance"],
+      ["CIA Triad", "4:14", "https://www.professormesser.com/?p=625341", "Foundational Security+ concept"],
+      ["Security Concepts", "9:21", "https://www.professormesser.com/?p=625346", "Core terminology"],
+      ["Defense in Depth", "10:02", "https://www.professormesser.com/?p=625350", "Already discussed in our sessions"],
+      ["Authentication Methods", "8:15", "https://www.professormesser.com/?p=625355", "Security+ core"],
+      ["Denial of Service", "5:46", "https://www.professormesser.com/?p=625377", "Must-know attack type"],
+      ["On-path Attacks (MITM)", "6:59", "https://www.professormesser.com/?p=625386", "Relates to NDP spoofing we covered"],
+      ["VLAN Hopping", "5:42", "https://www.professormesser.com/?p=625390", "Real attack technique"],
+      ["Spoofing", "5:12", "https://www.professormesser.com/?p=625396", "ARP/IP/DNS spoofing — covered before"],
+      ["Malware and Ransomware", "4:29", "https://www.professormesser.com/?p=625426", "Must-know"],
+      ["Password Attacks", "7:54", "https://www.professormesser.com/?p=625433", "Core Security+ topic"],
+      ["Social Engineering", "5:17", "https://www.professormesser.com/?p=625441", "Very common attack vector"],
+      ["Network Hardening", "19:15", "https://www.professormesser.com/?p=625468", "Defender perspective — critical"],
+      ["Wireless Security", "9:25", "https://www.professormesser.com/?p=625472", "WPA/WPA2/WPA3 must-know"],
+      ["Remote Access (VPN)", "10:33", "https://www.professormesser.com/?p=625476", "Security relevant"],
+      ["Command Line Tools", "21:02", "https://www.professormesser.com/?p=625518", "ping, traceroute, ipconfig — already practiced"]
+    ]
+  },
+  {
+    key: "med",
+    label: "Watch at Normal Speed",
+    tagClass: "tag-med",
+    note: "Useful context, but don't over-memorize — lower exam/security weight than the group above.",
+    videos: [
+      ["Data Communication", "12:47", "https://www.professormesser.com/?p=624600", ""],
+      ["Network Topologies", "6:58", "https://www.professormesser.com/?p=624630", ""],
+      ["Network Types", "14:30", "https://www.professormesser.com/?p=624634", ""],
+      ["Virtual Networks", "6:13", "https://www.professormesser.com/?p=624653", ""],
+      ["Ethernet Standards", "9:00", "https://www.professormesser.com/?p=624677", ""],
+      ["Network Communication", "5:28", "https://www.professormesser.com/?p=624690", ""],
+      ["Classful Subnetting", "12:46", "https://www.professormesser.com/?p=624693", ""],
+      ["Magic Number Subnetting", "19:54", "https://www.professormesser.com/?p=624702", ""],
+      ["Seven Second Subnetting", "20:12", "https://www.professormesser.com/?p=624705", ""],
+      ["IPv6 Subnet Masks", "5:06", "https://www.professormesser.com/?p=624712", ""],
+      ["DNS Record Types", "8:28", "https://www.professormesser.com/?p=624899", ""],
+      ["An Overview of NTP", "4:26", "https://www.professormesser.com/?p=624903", ""],
+      ["Cloud Models", "6:48", "https://www.professormesser.com/?p=624915", ""],
+      ["Networking Devices", "8:32", "https://www.professormesser.com/?p=624974", ""],
+      ["Advanced Networking Devices", "11:50", "https://www.professormesser.com/?p=624978", "Firewall/IDS mentioned"],
+      ["Network Switching Overview", "12:19", "https://www.professormesser.com/?p=625039", ""],
+      ["Wireless Standards", "9:07", "https://www.professormesser.com/?p=625127", ""],
+      ["SNMP", "6:43", "https://www.professormesser.com/?p=625223", "Has security relevance"],
+      ["Risk Management", "10:08", "https://www.professormesser.com/?p=625360", "Deeper in Security+"],
+      ["Rogue Services", "4:23", "https://www.professormesser.com/?p=625419", "Rogue DHCP/DNS"],
+      ["Deauthentication", "4:56", "https://www.professormesser.com/?p=625437", "WiFi-specific attack"],
+      ["Physical Security", "10:38", "https://www.professormesser.com/?p=625481", ""],
+      ["High Availability", "9:17", "https://www.professormesser.com/?p=625301", ""],
+      ["Recovery Sites", "4:08", "https://www.professormesser.com/?p=625310", ""],
+      ["Availability Concepts", "3:07", "https://www.professormesser.com/?p=625319", ""],
+      ["Software Tools", "9:38", "https://www.professormesser.com/?p=625514", ""],
+      ["Network Troubleshooting Methodology", "6:35", "https://www.professormesser.com/?p=625491", ""],
+      ["General Network Troubleshooting", "7:57", "https://www.professormesser.com/?p=625539", ""]
+    ]
+  },
+  {
+    key: "low",
+    label: "Skip or Fast-Forward",
+    tagClass: "tag-low",
+    note: "Mostly hardware/CLI-configuration heavy — low return for a cybersecurity-focused path. Watch at 1.5–2x if at all.",
+    videos: [
+      ["WAN Termination", "2:55", "https://www.professormesser.com/?p=624649", ""],
+      ["Provider Links", "6:22", "https://www.professormesser.com/?p=624656", ""],
+      ["Copper Cabling", "9:26", "https://www.professormesser.com/?p=624659", ""],
+      ["Optical Fiber", "3:32", "https://www.professormesser.com/?p=624662", ""],
+      ["Network Connectors", "7:00", "https://www.professormesser.com/?p=624665", ""],
+      ["Network Transceivers", "7:33", "https://www.professormesser.com/?p=624668", ""],
+      ["Cable Management", "7:09", "https://www.professormesser.com/?p=624673", ""],
+      ["Configuring IPv6", "5:58", "https://www.professormesser.com/?p=624716", ""],
+      ["Configuring DHCP", "7:39", "https://www.professormesser.com/?p=624884", ""],
+      ["Network Architectures", "9:54", "https://www.professormesser.com/?p=624907", ""],
+      ["Storage Area Networks", "3:20", "https://www.professormesser.com/?p=624911", ""],
+      ["Designing the Cloud", "8:21", "https://www.professormesser.com/?p=624920", ""],
+      ["Networked Devices", "6:14", "https://www.professormesser.com/?p=624982", ""],
+      ["Dynamic Routing", "8:11", "https://www.professormesser.com/?p=625025", ""],
+      ["Routing Technologies", "16:34", "https://www.professormesser.com/?p=625030", ""],
+      ["Introduction to Ethernet", "12:00", "https://www.professormesser.com/?p=625034", ""],
+      ["Spanning Tree Protocol", "6:52", "https://www.professormesser.com/?p=625085", ""],
+      ["Interface Configurations", "8:22", "https://www.professormesser.com/?p=625089", ""],
+      ["Straight-Through and Crossover Cables", "6:52", "https://www.professormesser.com/?p=625092", ""],
+      ["Wireless Technologies", "16:22", "https://www.professormesser.com/?p=625132", ""],
+      ["Cellular Standards", "3:59", "https://www.professormesser.com/?p=625141", ""],
+      ["Performance Metrics", "10:17", "https://www.professormesser.com/?p=625215", ""],
+      ["Plans and Procedures", "9:28", "https://www.professormesser.com/?p=625244", ""],
+      ["Network Documentation", "9:25", "https://www.professormesser.com/?p=625255", ""],
+      ["Infrastructure Support", "5:27", "https://www.professormesser.com/?p=625306", ""],
+      ["Network Redundancy", "5:42", "https://www.professormesser.com/?p=625314", ""],
+      ["Cable Connectivity", "11:16", "https://www.professormesser.com/?p=625495", ""],
+      ["Wired Network Troubleshooting", "13:12", "https://www.professormesser.com/?p=625499", ""],
+      ["Hardware Tools", "16:56", "https://www.professormesser.com/?p=625504", ""],
+      ["Wireless Troubleshooting", "11:05", "https://www.professormesser.com/?p=625522", ""],
+      ["Common Wireless Issues", "9:22", "https://www.professormesser.com/?p=625529", ""],
+      ["Common Network Issues – Part 1", "14:08", "https://www.professormesser.com/?p=625543", ""],
+      ["Common Network Issues – Part 2", "14:22", "https://www.professormesser.com/?p=625548", ""]
+    ]
+  }
+];
+
+const STORAGE_KEY = "netplus-checklist-state";
+let state = {};
+
+function idFor(url) {
+  return url.split("=").pop();
+}
+
+async function loadState() {
+  try {
+    const res = await window.storage.get(STORAGE_KEY);
+    state = res && res.value ? JSON.parse(res.value) : {};
+  } catch (e) {
+    state = {};
+  }
+}
+
+async function saveState() {
+  try {
+    await window.storage.set(STORAGE_KEY, JSON.stringify(state));
+  } catch (e) {
+    console.error("Could not save progress", e);
+  }
+}
+
+function render() {
+  const container = document.getElementById("groups");
+  container.innerHTML = "";
+  let totalDone = 0, totalAll = 0;
+
+  DATA.forEach(group => {
+    const doneInGroup = group.videos.filter(v => state[idFor(v[2])]).length;
+    totalDone += doneInGroup;
+    totalAll += group.videos.length;
+
+    const groupEl = document.createElement("div");
+    groupEl.className = "group";
+
+    groupEl.innerHTML = `
+      <div class="group-head">
+        <span class="tag ${group.tagClass}">${group.label}</span>
+        <span class="count">${doneInGroup}/${group.videos.length}</span>
+      </div>
+      <p class="group-note">${group.note}</p>
+      <ul class="videos"></ul>
+    `;
+
+    const ul = groupEl.querySelector("ul.videos");
+
+    group.videos.forEach(([title, dur, url, why]) => {
+      const id = idFor(url);
+      const checked = !!state[id];
+      const li = document.createElement("li");
+      li.className = "video" + (checked ? " done" : "");
+      li.innerHTML = `
+        <input type="checkbox" data-id="${id}" ${checked ? "checked" : ""}>
+        <div class="vid-main">
+          <a class="title" href="${url}" target="_blank" rel="noopener">${title}</a>
+          <span class="dur">${dur}</span>
+          ${why ? `<p class="why">${why}</p>` : ""}
+        </div>
+      `;
+      ul.appendChild(li);
+    });
+
+    container.appendChild(groupEl);
+  });
+
+  document.getElementById("progressCount").textContent = `${totalDone} / ${totalAll} watched`;
+  document.getElementById("progressFill").style.width = totalAll ? `${(totalDone / totalAll) * 100}%` : "0%";
+
+  container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener("change", async (e) => {
+      const id = e.target.dataset.id;
+      state[id] = e.target.checked;
+      await saveState();
+      render();
+    });
+  });
+}
+
+document.getElementById("resetBtn").addEventListener("click", async () => {
+  if (!confirm("Reset all checkmarks?")) return;
+  state = {};
+  await saveState();
+  render();
+});
+
+(async function init() {
+  await loadState();
+  render();
+})();
+</script>
+</body>
+</html>
