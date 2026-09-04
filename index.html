@@ -247,9 +247,151 @@
   }
 
   .reset-btn:hover { border-color: var(--med); color: var(--med); }
+
+  .layout {
+    max-width: 1080px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .layout .wrap { margin: 0; flex: 1; min-width: 0; }
+
+  .sidebar {
+    width: 300px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 18px 18px 16px;
+    box-shadow: 0 0 0 1px rgba(88, 224, 168, 0.04), 0 20px 50px rgba(0,0,0,0.35);
+  }
+
+  .panel h2 {
+    font-size: 1rem;
+    margin: 0 0 12px;
+    color: #f2f7f4;
+    font-weight: 650;
+  }
+
+  .add-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .add-row input {
+    flex: 1;
+    min-width: 0;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    border-radius: 5px;
+    padding: 8px 10px;
+    font-family: var(--sans);
+    font-size: 0.85rem;
+  }
+
+  .add-row input:focus { outline: none; border-color: var(--high); }
+
+  .add-row button {
+    background: var(--high-dim);
+    color: var(--high);
+    border: 1px solid var(--high);
+    border-radius: 5px;
+    width: 36px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  .add-row button:hover { background: var(--high); color: #06120d; }
+
+  ul.custom-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  li.custom-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  li.custom-item:last-child { border-bottom: none; }
+
+  li.custom-item span.txt {
+    flex: 1;
+    min-width: 0;
+    font-size: 0.88rem;
+    word-break: break-word;
+  }
+
+  li.custom-item.done span.txt {
+    text-decoration: line-through;
+    color: var(--dim);
+  }
+
+  .del-btn {
+    background: none;
+    border: none;
+    color: var(--dim);
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 2px 4px;
+    flex-shrink: 0;
+  }
+
+  .del-btn:hover { color: var(--med); }
+
+  .empty-note {
+    font-size: 0.82rem;
+    color: var(--dim);
+    font-style: italic;
+  }
+
+  .sticky-note {
+    width: 100%;
+    min-height: 160px;
+    resize: vertical;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    border-radius: 5px;
+    padding: 10px;
+    font-family: var(--sans);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+
+  .sticky-note:focus { outline: none; border-color: var(--high); }
+
+  .saved-note {
+    text-align: right;
+    font-size: 0.72rem;
+    color: var(--dim);
+    font-style: italic;
+    margin-top: 6px;
+    height: 1em;
+  }
+
+  @media (max-width: 860px) {
+    .layout { flex-direction: column; }
+    .sidebar { width: 100%; }
+  }
 </style>
 </head>
-<body>
+<div class="layout">
 <div class="wrap">
 
   <header>
@@ -268,6 +410,26 @@
     <button class="reset-btn" id="resetBtn">Reset all checkmarks</button>
   </div>
 
+</div>
+
+<div class="sidebar">
+
+  <div class="panel">
+    <h2>+ My Own Checklist</h2>
+    <div class="add-row">
+      <input type="text" id="customInput" placeholder="Add a task...">
+      <button id="customAddBtn">+</button>
+    </div>
+    <ul class="custom-list" id="customList"></ul>
+  </div>
+
+  <div class="panel">
+    <h2>📌 Sticky Note</h2>
+    <textarea class="sticky-note" id="stickyNote" placeholder="Quick notes..."></textarea>
+    <div class="saved-note" id="stickySaved"></div>
+  </div>
+
+</div>
 </div>
 
 <script>
@@ -479,6 +641,109 @@ document.getElementById("resetBtn").addEventListener("click", () => {
 
 loadState();
 render();
+
+// --- My Own Checklist ---
+const CUSTOM_KEY = "netplus-custom-checklist";
+let customItems = [];
+
+function loadCustom() {
+  try {
+    const raw = localStorage.getItem(CUSTOM_KEY);
+    customItems = raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    customItems = [];
+  }
+}
+
+function saveCustom() {
+  try {
+    localStorage.setItem(CUSTOM_KEY, JSON.stringify(customItems));
+  } catch (e) {
+    console.error("Could not save custom checklist", e);
+  }
+}
+
+function renderCustom() {
+  const list = document.getElementById("customList");
+  list.innerHTML = "";
+
+  if (customItems.length === 0) {
+    list.innerHTML = '<li class="empty-note">No tasks yet — add one above.</li>';
+    return;
+  }
+
+  customItems.forEach((item, i) => {
+    const li = document.createElement("li");
+    li.className = "custom-item" + (item.done ? " done" : "");
+    li.innerHTML = `
+      <input type="checkbox" data-i="${i}" ${item.done ? "checked" : ""}>
+      <span class="txt"></span>
+      <button class="del-btn" data-i="${i}">✕</button>
+    `;
+    li.querySelector(".txt").textContent = item.text;
+    list.appendChild(li);
+  });
+
+  list.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener("change", (e) => {
+      const i = Number(e.target.dataset.i);
+      customItems[i].done = e.target.checked;
+      saveCustom();
+      renderCustom();
+    });
+  });
+
+  list.querySelectorAll(".del-btn").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      const i = Number(e.target.dataset.i);
+      customItems.splice(i, 1);
+      saveCustom();
+      renderCustom();
+    });
+  });
+}
+
+function addCustomItem() {
+  const input = document.getElementById("customInput");
+  const text = input.value.trim();
+  if (!text) return;
+  customItems.push({ text, done: false });
+  saveCustom();
+  renderCustom();
+  input.value = "";
+  input.focus();
+}
+
+document.getElementById("customAddBtn").addEventListener("click", addCustomItem);
+document.getElementById("customInput").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") addCustomItem();
+});
+
+loadCustom();
+renderCustom();
+
+// --- Sticky Note ---
+const NOTE_KEY = "netplus-sticky-note";
+const noteEl = document.getElementById("stickyNote");
+const savedEl = document.getElementById("stickySaved");
+let noteSaveTimer = null;
+
+try {
+  noteEl.value = localStorage.getItem(NOTE_KEY) || "";
+} catch (e) {}
+
+noteEl.addEventListener("input", () => {
+  savedEl.textContent = "";
+  clearTimeout(noteSaveTimer);
+  noteSaveTimer = setTimeout(() => {
+    try {
+      localStorage.setItem(NOTE_KEY, noteEl.value);
+      savedEl.textContent = "saved";
+    } catch (e) {
+      console.error("Could not save note", e);
+    }
+  }, 400);
+});
 </script>
 </body>
 </html>
